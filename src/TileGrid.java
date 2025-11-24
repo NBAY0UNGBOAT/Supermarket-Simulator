@@ -1296,6 +1296,12 @@ public class TileGrid extends JPanel {
         int centerX = shopperCol * CELL + CELL / 2;
         int centerY = shopperRow * CELL + CELL / 2;
 
+        // Draw Thugger first (so player appears in front)
+        if (thugger != null && thugger.getAppearFloor() == currentFloor) {
+            thugger.draw(g, CELL);
+        }
+
+        // Draw player sprite
         if (player != null) {
             player.draw(g, centerX, centerY, CELL);
         } else {
@@ -1305,9 +1311,37 @@ public class TileGrid extends JPanel {
             g.fillOval(sx + pad, sy + pad, CELL - 2 * pad, CELL - 2 * pad);
         }
 
-        // Draw NPCs
+        // Draw player name and age labels AFTER player sprite (so they appear on top)
+        if (player != null) {
+            g.setColor(new Color(220, 220, 220));
+            g.setFont(new Font("Arial", Font.BOLD, 9));
+            FontMetrics fm = g.getFontMetrics();
+            String playerLabel = playerUsername;
+            int labelX = centerX - fm.stringWidth(playerLabel) / 2;
+            int labelY = centerY - CELL + 5;
+            g.drawString(playerLabel, labelX, labelY);
+            
+            // Draw age below name
+            g.setFont(new Font("Arial", Font.PLAIN, 8));
+            String ageStr = "Age: " + playerAge;
+            fm = g.getFontMetrics();
+            int ageX = centerX - fm.stringWidth(ageStr) / 2;
+            int ageY = labelY + 10;
+            g.drawString(ageStr, ageX, ageY);
+        }
+
+        // Draw Thugger label AFTER player (so it appears on top of Thugger sprite)
         if (thugger != null && thugger.getAppearFloor() == currentFloor) {
-            thugger.draw(g, CELL);
+            g.setColor(new Color(220, 220, 220));
+            g.setFont(new Font("Arial", Font.BOLD, 10));
+            int thuggerScreenX = thugger.getX();
+            int thuggerScreenY = thugger.getY() - CELL;  // Position above Thugger
+            String thuggerLabel = "Young Thug";
+            FontMetrics fm = g.getFontMetrics();
+            int labelWidth = fm.stringWidth(thuggerLabel);
+            int labelX = thuggerScreenX - labelWidth / 2;
+            int labelY = thuggerScreenY;
+            g.drawString(thuggerLabel, labelX, labelY);
         }
 
         // Draw floor indicator (top left)
